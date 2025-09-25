@@ -16,8 +16,8 @@ export function ThemeToggle() {
       <motion.div
         initial={false}
         animate={{
-          scale: theme === 'light' ? 1 : 0,
-          opacity: theme === 'light' ? 1 : 0,
+          scale: theme === 'light' ? 1.1 : 0,
+          opacity: theme === 'light' ? 1.1 : 0,
         }}
         transition={{ duration: 0.2 }}
         className="absolute"
@@ -28,8 +28,8 @@ export function ThemeToggle() {
       <motion.div
         initial={false}
         animate={{
-          scale: theme === 'dark' ? 1 : 0,
-          opacity: theme === 'dark' ? 1 : 0,
+          scale: theme === 'dark' ? 1.1 : 0,
+          opacity: theme === 'dark' ? 1.1 : 0,
         }}
         transition={{ duration: 0.2 }}
         className="absolute"

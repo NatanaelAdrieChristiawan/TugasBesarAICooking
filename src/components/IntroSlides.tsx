@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Search, Calculator, Lightbulb, ChefHat } from 'lucide-react';
 import { Button } from './ui/button';
@@ -11,7 +11,7 @@ interface IntroSlidesProps {
 
 export function IntroSlides({ onComplete }: IntroSlidesProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false);
+  const isScrolling = useRef(false);
 
   const slides = [
     {
@@ -25,7 +25,7 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
             transition={{ duration: 1, delay: 0.5 }}
             className="space-y-4 md:space-y-6"
           >
-            <motion.h1 
+            <motion.h1
               className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -33,7 +33,7 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
             >
               AI Cooking Assistant
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="text-lg sm:text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed px-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -42,7 +42,7 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
               Temukan resep, konversi takaran, dan ciptakan mahakarya di dapur Anda.
             </motion.p>
           </motion.div>
-          
+
           <motion.div
             className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
             initial={{ opacity: 0 }}
@@ -78,7 +78,7 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
                 className="w-full h-64 sm:h-80 md:h-96 object-cover rounded-2xl shadow-2xl"
               />
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -93,11 +93,11 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
               >
                 <Search className="text-white" size={24} />
               </motion.div>
-              
+
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
                 Pencarian Resep Tanpa Batas
               </h2>
-              
+
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
                 Dari rendang hingga carbonara, tanyakan resep apa pun yang Anda inginkan dan dapatkan panduan langkah demi langkah secara instan.
               </p>
@@ -125,16 +125,16 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
               >
                 <Calculator className="text-white" size={24} />
               </motion.div>
-              
+
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
                 Konversi Takaran Menjadi Mudah
               </h2>
-              
+
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
                 Ubah satuan gram ke sendok, liter ke gelas, dan lainnya. Tidak perlu lagi bingung dengan takaran yang berbeda.
               </p>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -151,7 +151,7 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
                   <span className="text-muted-foreground">→</span>
                   <span className="text-xl md:text-2xl font-semibold text-green-600">240ml</span>
                 </motion.div>
-                
+
                 <motion.div
                   className="flex items-center justify-between p-3 md:p-4 bg-muted rounded-lg"
                   animate={{ scale: [1, 1.02, 1] }}
@@ -183,7 +183,7 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
                 className="w-full h-48 sm:h-64 md:h-80 object-cover rounded-2xl shadow-2xl"
               />
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -198,11 +198,11 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
               >
                 <Lightbulb className="text-white" size={24} />
               </motion.div>
-              
+
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
                 Solusi Cerdas Anti Bingung
               </h2>
-              
+
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto px-4">
                 Cukup sebutkan bahan yang Anda punya, seperti 'telur dan mie', dan biarkan AI kami menyarankan resep yang lezat untuk Anda.
               </p>
@@ -230,11 +230,11 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
             >
               <ChefHat className="text-green-600" size={32} />
             </motion.div>
-            
+
             <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold">
               Siap Memasak Sesuatu yang Hebat?
             </h2>
-            
+
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -255,70 +255,55 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
   ];
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowDown' && currentSlide < slides.length - 1) {
-        setCurrentSlide(currentSlide + 1);
-      } else if (e.key === 'ArrowUp' && currentSlide > 0) {
-        setCurrentSlide(currentSlide - 1);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSlide, slides.length]);
-
-  useEffect(() => {
     let touchStartY = 0;
-    let touchEndY = 0;
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.changedTouches[0].screenY;
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      touchEndY = e.changedTouches[0].screenY;
-      if (isScrolling) return;
-      
+      if (isScrolling.current) return;
+      const touchEndY = e.changedTouches[0].screenY;
       const deltaY = touchStartY - touchEndY;
       const threshold = 50;
 
       if (Math.abs(deltaY) > threshold) {
-        setIsScrolling(true);
-        setTimeout(() => setIsScrolling(false), 800);
+        isScrolling.current = true;
+        setTimeout(() => { isScrolling.current = false; }, 2000);
 
-        if (deltaY > 0 && currentSlide < slides.length - 1) {
-          // Swipe up - next slide
-          setCurrentSlide(currentSlide + 1);
-        } else if (deltaY < 0 && currentSlide > 0) {
-          // Swipe down - previous slide
-          setCurrentSlide(currentSlide - 1);
+        if (deltaY > 0) { // Swipe up
+          setCurrentSlide(prev => Math.min(prev + 1, slides.length - 1));
+        } else { // Swipe down
+          setCurrentSlide(prev => Math.max(prev - 1, 0));
         }
       }
     };
 
     const handleWheel = (e: WheelEvent) => {
-      if (isScrolling) return;
-      
-      setIsScrolling(true);
-      setTimeout(() => setIsScrolling(false), 800);
+      if (isScrolling.current) return;
 
-      if (e.deltaY > 50 && currentSlide < slides.length - 1) {
-        setCurrentSlide(currentSlide + 1);
-      } else if (e.deltaY < -50 && currentSlide > 0) {
-        setCurrentSlide(currentSlide - 1);
+      if (Math.abs(e.deltaY) > 50) {
+        isScrolling.current = true;
+        setTimeout(() => { isScrolling.current = false; }, 2000);
+
+        if (e.deltaY > 0) { // Scroll down
+          setCurrentSlide(prev => Math.min(prev + 1, slides.length - 1));
+        } else { // Scroll up
+          setCurrentSlide(prev => Math.max(prev - 1, 0));
+        }
       }
     };
 
     window.addEventListener('wheel', handleWheel, { passive: true });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchend', handleTouchEnd, { passive: true });
-    
+
     return () => {
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [currentSlide, isScrolling, slides.length]);
+  }, []);
 
   return (
     <div className="h-screen overflow-hidden relative">
@@ -352,22 +337,21 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
               <div className="absolute inset-0 bg-black bg-opacity-60 dark:bg-opacity-75"></div>
             </div>
           )}
-          
+
           {slides[currentSlide].content}
         </motion.div>
       </AnimatePresence>
 
       {/* Slide indicators */}
-      <div className="fixed right-4 md:right-6 top-1/2 transform -translate-y-1/2 space-y-2 z-20">
+      <div className="fixed right-4 md:right-6 top-1/2 transform -translate-y-1/2 flex flex-col space-y-2 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
-              index === currentSlide 
-                ? 'bg-green-500 w-6 md:w-8' 
+            className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${index === currentSlide
+                ? 'bg-green-500 h-6 md:h-8'
                 : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
-            }`}
+              }`}
           />
         ))}
       </div>

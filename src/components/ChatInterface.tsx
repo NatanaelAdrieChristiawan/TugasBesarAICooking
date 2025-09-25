@@ -19,7 +19,7 @@ export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Halo! Saya Asisten Masak AI Anda. Mau cari resep apa hari ini? Atau mungkin Anda punya bahan-bahan di kulkas dan butuh inspirasi?',
+      text: 'Halo! Saya Asisten Masak AI Anda. Mau cari resep apa hari ini?',
       isUser: false,
       timestamp: new Date(),
     },
@@ -37,45 +37,25 @@ export function ChatInterface() {
     'Resep pasta sederhana'
   ];
 
-  const mockResponses = {
-    'resep': [
-      'Baik! Resep mana yang ingin Anda coba? Saya punya banyak pilihan mulai dari makanan tradisional Indonesia hingga masakan internasional.',
-      'Saya akan berikan resep yang mudah diikuti. Apakah Anda ingin resep untuk sarapan, makan siang, atau makan malam?'
-    ],
-    'ayam': [
-      'Resep Ayam Goreng Kremes:\n\nBahan:\n- 1 ekor ayam, potong 8\n- 2 sdm tepung terigu\n- 1 sdm tepung beras\n- Bumbu halus: bawang putih, kunyit, ketumbar\n\nCara:\n1. Marinasi ayam dengan bumbu halus 30 menit\n2. Balur dengan campuran tepung\n3. Goreng hingga golden brown\n\nTips: Goreng dengan api sedang agar matang merata!'
-    ],
-    'nasi dan telur': [
-      'Perfect! Dengan nasi dan telur, Anda bisa membuat Nasi Goreng Sederhana:\n\n🍳 Nasi Goreng Telur:\n- Tumis bawang putih\n- Masukkan telur, orak-arik\n- Tambahkan nasi, aduk rata\n- Bumbui dengan kecap manis, garam, merica\n- Taburi bawang goreng\n\nMau saya berikan variasi lain?'
-    ],
-    'konversi': [
-      '1 gelas = 240 ml\n\nKonversi lainnya:\n- 1 sendok makan (sdm) = 15 ml\n- 1 sendok teh (sdt) = 5 ml\n- 1 cup = 240 ml\n- 1 ounce = 30 ml\n\nAda konversi lain yang ingin Anda tahu?'
-    ],
-    'pasta': [
-      'Pasta Aglio Olio Sederhana:\n\nBahan:\n- 200g spaghetti\n- 4 siung bawang putih, iris tipis\n- 3 sdm olive oil\n- Cabai merah, potong\n- Peterseli, cincang\n- Parmesan cheese\n\nCara:\n1. Rebus pasta al dente\n2. Tumis bawang putih di olive oil\n3. Masukkan pasta, aduk\n4. Tambahkan cabai, peterseli\n5. Taburi parmesan\n\nSiap dalam 15 menit!'
-    ],
-    'default': [
-      'Itu pertanyaan menarik! Sebagai asisten masak AI, saya bisa membantu Anda dengan resep, konversi takaran, tips memasak, dan saran berdasarkan bahan yang tersedia.',
-      'Saya siap membantu! Coba tanyakan tentang resep masakan, konversi satuan (seperti cup ke ml), atau sebutkan bahan yang Anda punya untuk saran resep.',
-      'Hmm, sepertinya pertanyaan Anda agak di luar keahlian memasak saya. Bagaimana kalau kita bicara tentang resep atau tips memasak? 👩‍🍳'
-    ]
-  };
+  const fetchAIResponse = async (userMessage: string): Promise<string> => {
+    try {
+      const response = await fetch('http://localhost:3001/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage }),
+      });
 
-  const getAIResponse = (userMessage: string): string => {
-    const message = userMessage.toLowerCase();
-    
-    if (message.includes('ayam') && message.includes('goreng')) {
-      return mockResponses.ayam[0];
-    } else if (message.includes('nasi') && message.includes('telur')) {
-      return mockResponses['nasi dan telur'][0];
-    } else if (message.includes('gelas') || message.includes('ml') || message.includes('konversi')) {
-      return mockResponses.konversi[0];
-    } else if (message.includes('pasta') || message.includes('spaghetti')) {
-      return mockResponses.pasta[0];
-    } else if (message.includes('resep')) {
-      return mockResponses.resep[Math.floor(Math.random() * mockResponses.resep.length)];
-    } else {
-      return mockResponses.default[Math.floor(Math.random() * mockResponses.default.length)];
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      return data.reply;
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+      return "Maaf, terjadi kesalahan saat menghubungi Chef AI. Silakan coba lagi nanti.";
     }
   };
 
@@ -90,15 +70,15 @@ export function ChatInterface() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputValue;
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate AI thinking time
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+    const aiText = await fetchAIResponse(currentInput);
 
     const aiResponse: Message = {
       id: (Date.now() + 1).toString(),
-      text: getAIResponse(userMessage.text),
+      text: aiText,
       isUser: false,
       timestamp: new Date(),
     };
@@ -117,7 +97,6 @@ export function ChatInterface() {
   }, [messages, isTyping]);
 
   useEffect(() => {
-    // Focus input on desktop, but not on mobile to avoid keyboard issues
     if (window.innerWidth >= 768) {
       inputRef.current?.focus();
     }
@@ -131,7 +110,6 @@ export function ChatInterface() {
       className="flex flex-col bg-background"
       style={{ height: viewportHeight }}
     >
-      {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -149,7 +127,6 @@ export function ChatInterface() {
         </div>
       </motion.header>
 
-      {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-6 space-y-4 md:space-y-6">
           <AnimatePresence>
@@ -178,10 +155,8 @@ export function ChatInterface() {
         </div>
       </div>
 
-      {/* Input Area */}
       <div className="bg-card border-t border-border px-3 md:px-4 py-3 md:py-4 sticky bottom-0">
         <div className="max-w-4xl mx-auto space-y-3 md:space-y-4">
-          {/* Suggestion Chips */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -202,7 +177,6 @@ export function ChatInterface() {
             ))}
           </motion.div>
 
-          {/* Input Field */}
           <div className="flex gap-2">
             <Input
               ref={inputRef}
