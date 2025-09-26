@@ -15,6 +15,11 @@ interface Message {
   timestamp: Date;
 }
 
+interface GeminiHistoryMessage {
+  role: 'user' | 'model';
+  parts: { text: string }[];
+}
+
 export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -37,14 +42,18 @@ export function ChatInterface() {
     'Resep pasta sederhana'
   ];
 
-  const fetchAIResponse = async (userMessage: string): Promise<string> => {
+  const fetchAIResponse = async (userMessage: string, history: GeminiHistoryMessage[]): Promise<string> => {
     try {
       const response = await fetch('http://localhost:3001/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: userMessage }),
+        // Kirim pesan baru DAN seluruh riwayat percakapan
+        body: JSON.stringify({
+          message: userMessage,
+          history: history
+        }),
       });
 
       if (!response.ok) {
@@ -69,12 +78,17 @@ export function ChatInterface() {
       timestamp: new Date(),
     };
 
+    const historyForAPI = messages.slice(1).map(msg => ({
+      role: msg.isUser ? 'user' : 'model',
+      parts: [{ text: msg.text }]
+    } as GeminiHistoryMessage));
+
     setMessages(prev => [...prev, userMessage]);
     const currentInput = inputValue;
     setInputValue('');
     setIsTyping(true);
 
-    const aiText = await fetchAIResponse(currentInput);
+    const aiText = await fetchAIResponse(currentInput, historyForAPI);
 
     const aiResponse: Message = {
       id: (Date.now() + 1).toString(),
@@ -141,7 +155,7 @@ export function ChatInterface() {
               </motion.div>
             ))}
           </AnimatePresence>
-          
+
           {isTyping && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -189,11 +203,10 @@ export function ChatInterface() {
             <Button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isTyping}
-              className={`rounded-full w-10 h-10 md:w-12 md:h-12 p-0 transition-all duration-300 ${
-                inputValue.trim() && !isTyping
-                  ? 'bg-green-500 hover:bg-green-600 hover:scale-105'
-                  : 'bg-muted cursor-not-allowed'
-              }`}
+              className={`rounded-full w-10 h-10 md:w-12 md:h-12 p-0 transition-all duration-300 ${inputValue.trim() && !isTyping
+                ? 'bg-green-500 hover:bg-green-600 hover:scale-105'
+                : 'bg-muted cursor-not-allowed'
+                }`}
             >
               <Send className="text-white" size={16} />
             </Button>
