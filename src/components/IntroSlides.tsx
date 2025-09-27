@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, Search, Calculator, Lightbulb, ChefHat } from 'lucide-react';
+import { ChevronDown, Search, Lightbulb, ChefHat } from 'lucide-react';
 import { Button } from './ui/button';
 import { ImageWithFallback } from './image/ImageWithFallback';
 import { ThemeToggle } from './ThemeToggle';
@@ -106,67 +106,7 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
         </div>
       )
     },
-    {
-      id: 'calculator',
-      content: (
-        <div className="h-full flex items-center justify-center px-4 md:px-8 bg-background">
-          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-4 md:space-y-6 text-center md:text-left"
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="w-12 h-12 md:w-16 md:h-16 bg-amber-500 rounded-full flex items-center justify-center mx-auto md:mx-0"
-              >
-                <Calculator className="text-white" size={24} />
-              </motion.div>
-
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
-                Konversi Takaran Menjadi Mudah
-              </h2>
-
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                Ubah satuan gram ke sendok, liter ke gelas, dan lainnya. Tidak perlu lagi bingung dengan takaran yang berbeda.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="bg-card border border-border rounded-2xl shadow-2xl p-6 md:p-8"
-            >
-              <div className="space-y-4 md:space-y-6">
-                <motion.div
-                  className="flex items-center justify-between p-3 md:p-4 bg-muted rounded-lg"
-                  animate={{ scale: [1, 1.02, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                >
-                  <span className="text-xl md:text-2xl font-semibold text-foreground">1 cup</span>
-                  <span className="text-muted-foreground">→</span>
-                  <span className="text-xl md:text-2xl font-semibold text-green-600">240ml</span>
-                </motion.div>
-
-                <motion.div
-                  className="flex items-center justify-between p-3 md:p-4 bg-muted rounded-lg"
-                  animate={{ scale: [1, 1.02, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
-                >
-                  <span className="text-xl md:text-2xl font-semibold text-foreground">1 tbsp</span>
-                  <span className="text-muted-foreground">→</span>
-                  <span className="text-xl md:text-2xl font-semibold text-green-600">15g</span>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      )
-    },
+    
     {
       id: 'ingredients',
       content: (
