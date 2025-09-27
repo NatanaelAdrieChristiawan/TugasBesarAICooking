@@ -16,7 +16,7 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
   const slides = [
     {
       id: 'hero',
-      background: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+      background: 'https://unsplash.com/photos/x5SRhkFajrA/download?force=true&w=2000',
       content: (
         <div className="flex flex-col items-center justify-center h-full text-center text-white relative z-10 px-4 ">
           <motion.div
@@ -334,7 +334,7 @@ export function IntroSlides({ onComplete }: IntroSlidesProps) {
                   backgroundImage: `url('${slides[0].background}')`
                 }}
               />
-              <div className="absolute inset-0 bg-black bg-opacity-60 dark:bg-opacity-75"></div>
+              <div className="absolute inset-0 bg-opacity-60 dark:bg-opacity-75"></div>
             </div>
           )}
 
